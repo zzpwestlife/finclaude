@@ -10,7 +10,6 @@ allowed-tools:
   - Glob
   - Grep
   - RunCommand
-  - mcp__context7__*
 ---
 
 <objective>
