@@ -10,6 +10,7 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+  - mcp__context7__*
 ---
 
 <objective>

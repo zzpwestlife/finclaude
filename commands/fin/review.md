@@ -9,6 +9,8 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+  - mcp__code_simplifier__*
+  - mcp__context7__*
 ---
 
 <objective>
@@ -19,7 +21,7 @@ Review the current codebase (or specified files) for:
 </objective>
 
 <process>
-1. **Analyze**: Use native tools (Read/Grep) to analyze target files.
+1. **Simplify**: Call `mcp__code_simplifier__simplify` on target files.
 2. **Audit**: Scan for hardcoded secrets, weak crypto, or SQL injection risks.
 3. **Report**: Generate a `REVIEW_REPORT.md` with findings and action items.
 </process>
