@@ -38,7 +38,7 @@ show_help() {
   FEISHU_WEBHOOK_URL    飞书机器人 Webhook URL
   COVERAGE_THRESHOLD    测试覆盖率阈值 (默认: 80)
 
-更多信息: https://github.com/your-org/finclaude
+更多信息: https://github.com/zzpwestlife/finclaude
 HELP
 }
 

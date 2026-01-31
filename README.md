@@ -14,7 +14,7 @@
 
 ```bash
 # 1. 克隆配置仓库
-git clone https://github.com/your-org/finclaude.git ~/finclaude
+git clone https://github.com/zzpwestlife/finclaude.git ~/finclaude
 cd ~/finclaude
 
 # 2. 运行一键安装脚本

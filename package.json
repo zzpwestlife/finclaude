@@ -27,12 +27,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/finclaude.git"
+    "url": "https://github.com/zzpwestlife/finclaude.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/finclaude/issues"
+    "url": "https://github.com/zzpwestlife/finclaude/issues"
   },
-  "homepage": "https://github.com/your-org/finclaude#readme",
+  "homepage": "https://github.com/zzpwestlife/finclaude#readme",
   "engines": {
     "node": ">=18.0.0"
   },

@@ -4,7 +4,7 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-org/finclaude.git ~/finclaude
+git clone https://github.com/zzpwestlife/finclaude.git ~/finclaude
 cd ~/finclaude
 
 # 2. 运行安装脚本
