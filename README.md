@@ -20,6 +20,7 @@ cd ~/finclaude
 # 2. 运行一键安装脚本
 chmod +x install.sh
 ./install.sh
+source ~/.zshrc  # 或重启终端使环境变量生效
 
 # 3. 配置飞书 Webhook
 # 编辑 ~/.finclaude/.env，填入你的飞书机器人 Webhook URL
@@ -84,22 +85,48 @@ echo 'export PATH="$FINCLAUDE_HOME/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-## 使用指南
+## 使用指南 (V2 Native Slash Commands)
 
-### 基础命令
+FinClaude V2 引入了 Claude Code 原生的 Slash Commands，支持直接在对话中使用 `@` 引用文件。
+
+### 1. 规划阶段 (`/fin:plan`)
+生成符合金融级规范的架构设计文档 (`PLAN.md`)。
 
 ```bash
-# 规划阶段 - 技术调研 + 架构设计
+# 在 Claude Code 中直接使用
+/fin:plan "支付网关重构方案" @docs/requirements.md
+```
+
+### 2. 开发阶段 (`/fin:dev`)
+启动 TDD 循环 (Red -> Green -> Refactor)。
+
+```bash
+# 针对特定文件开发
+/fin:dev "实现转账功能" @src/payment.ts
+```
+
+### 3. 代码审查 (`/fin:review`)
+执行代码简化和安全审计。
+
+```bash
+# 审查当前目录或指定文件
+/fin:review @src/payment.ts
+```
+
+### 兼容模式 (Legacy)
+原有的 `fin` 命令行工具仍然可用，并会自动转发请求到新的 Slash Commands。
+
+```bash
 fin plan "支付网关重构方案"
-
-# 开发阶段 - TDD 强制开发
 fin dev "实现转账功能"
-
-# 代码审查 - 简化 + 审查
 fin review
+```
 
 # 手动触发通知
 fin notify "自定义消息"
+
+# 更新所有组件
+fin update
 ```
 
 ### 工作流示例
@@ -155,29 +182,54 @@ NOTIFY_TEMPLATE=financial
     "command": "ccstatusline --theme powerline --warn-cost 0.5",
     "refreshInterval": 5000
   },
-  "permissions": {
-    "allow": [
-      {"command": "npm test", "when": "always"},
-      {"command": "git commit", "when": "after_confirmation"}
-    ],
-    "deny": [
-      {"command": "git push", "when": "coverage < 80"}
-    ]
+  "autoApprove": {
+    "readFiles": true,
+    "editFiles": false,
+    "executeCommands": ["npm test", "git status", "git diff"]
   },
   "hooks": {
-    "PreStop": [
+    "SessionEnd": [
       {
-        "type": "command",
-        "command": "node ~/finclaude/scripts/guard.js"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/finclaude/scripts/guard.js"
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "type": "command",
-        "command": "node ~/claude-code-notification/notify-system.js"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/claude-code-notification/notify-system.js"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/finclaude/scripts/notify.js --title 'Claude Code' --message '需要权限审批'"
+          }
+        ]
+      },
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/finclaude/scripts/notify.js --title 'Claude Code' --message '等待你的输入'"
+          }
+        ]
       }
     ]
-  }
+  },
+  "preferredModel": "claude-sonnet-4-5-20251022"
 }
 ```
 
@@ -223,6 +275,16 @@ NOTIFY_TEMPLATE=financial
 ```
 
 ## 故障排查
+
+### fin 命令未找到
+
+```bash
+# 使环境变量生效
+source ~/.zshrc  # 如果使用 bash，请运行 source ~/.bashrc
+
+# 或者检查安装路径
+ls -l ~/finclaude/bin/fin
+```
 
 ### 通知不触发
 

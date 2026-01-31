@@ -114,8 +114,10 @@ ccstatusline --theme powerline
 
 ## 更新
 
+使用 `fin update` 命令一键更新所有组件（包括 FinClaude 自身、ccstatusline、SuperClaude 和通知系统）：
+
 ```bash
-cd ~/finclaude
-git pull
-./install.sh
+fin update
 ```
+
+注意：MCP 插件（superpowers, code-simplifier）需要按照 `fin update` 的提示在 Claude Code 中手动更新。

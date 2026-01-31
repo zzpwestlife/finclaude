@@ -208,6 +208,87 @@ cmd_status() {
     echo ""
 }
 
+# 更新命令
+cmd_update() {
+    echo ""
+    echo "╔════════════════════════════════════════════════════════════╗"
+    echo "║  🔄 FinClaude 组件更新                                     ║"
+    echo "╚════════════════════════════════════════════════════════════╝"
+    echo ""
+
+    # 1. 更新 FinClaude 自身
+    echo "1️⃣  更新 FinClaude..."
+    echo "────────────────────────────────────────────────────────────"
+    if [ -d "$FINCLAUDE_HOME" ] && [ -d "$FINCLAUDE_HOME/.git" ]; then
+        cd "$FINCLAUDE_HOME"
+        if git pull; then
+            echo "✅ FinClaude 更新成功"
+        else
+            echo "⚠️  FinClaude 更新失败 (请检查 git 状态)"
+        fi
+    else
+        echo "⚠️  跳过 (非 git 仓库)"
+    fi
+    echo ""
+
+    # 2. 更新 ccstatusline
+    echo "2️⃣  更新 ccstatusline..."
+    echo "────────────────────────────────────────────────────────────"
+    if command -v ccstatusline >/dev/null 2>&1; then
+        npm update -g ccstatusline
+        echo "✅ ccstatusline 更新完成"
+    else
+        echo "⚠️  ccstatusline 未安装，跳过"
+    fi
+    echo ""
+
+    # 3. 更新 SuperClaude
+    echo "3️⃣  更新 SuperClaude..."
+    echo "────────────────────────────────────────────────────────────"
+    if command -v superclaude >/dev/null 2>&1; then
+        if command -v pipx >/dev/null 2>&1; then
+            pipx upgrade superclaude
+            echo "✅ SuperClaude 更新完成"
+        else
+            echo "⚠️  pipx 未找到，请手动更新 SuperClaude"
+        fi
+    else
+        echo "⚠️  SuperClaude 未安装，跳过"
+    fi
+    echo ""
+
+    # 4. 更新通知系统
+    echo "4️⃣  更新通知系统..."
+    echo "────────────────────────────────────────────────────────────"
+    if [ -d ~/claude-code-notification ]; then
+        cd ~/claude-code-notification
+        if git pull; then
+            npm install
+            echo "✅ 通知系统更新成功"
+        else
+            echo "⚠️  通知系统更新失败"
+        fi
+    else
+        echo "⚠️  通知系统未安装，跳过"
+    fi
+    echo ""
+
+    # 5. 提示更新 MCP 插件
+    echo "5️⃣  MCP 插件更新提醒..."
+    echo "────────────────────────────────────────────────────────────"
+    echo "MCP 插件 (superpowers, code-simplifier) 需要在 Claude Code 中手动更新："
+    echo ""
+    echo "👉 请在 Claude Code 中运行："
+    echo "   /plugin install superpowers@superpowers-marketplace"
+    echo "   /plugin install code-simplifier"
+    echo ""
+    
+    echo "════════════════════════════════════════════════════════════"
+    echo "🎉 更新流程结束"
+    echo "════════════════════════════════════════════════════════════"
+    echo ""
+}
+
 # 诊断命令
 cmd_doctor() {
     echo ""
@@ -264,15 +345,27 @@ cmd_doctor() {
         echo "   ✅ 已安装"
         
         # 检查 .env
-        if [ -f ~/claude-code-notification/.env ]; then
-            if grep -q "FEISHU_WEBHOOK_URL" ~/claude-code-notification/.env 2>/dev/null; then
-                echo "   ✅ 飞书配置: 已配置"
+        # 优先检查全局配置 ~/.finclaude/.env
+        if [ -f ~/.finclaude/.env ]; then
+            if grep -q "FEISHU_WEBHOOK_URL" ~/.finclaude/.env 2>/dev/null; then
+                 # 检查是否是默认值
+                 if grep -q "hook/xxxxxx" ~/.finclaude/.env; then
+                     echo "   ⚠️  飞书配置: 请修改默认 Webhook URL"
+                     echo "      文件位置: ~/.finclaude/.env"
+                     ((issues++))
+                 else
+                     echo "   ✅ 飞书配置: 已配置 (~/.finclaude/.env)"
+                 fi
             else
-                echo "   ⚠️  飞书配置: 未配置 Webhook URL"
+                echo "   ⚠️  飞书配置: 未找到 FEISHU_WEBHOOK_URL"
+                echo "      文件位置: ~/.finclaude/.env"
                 ((issues++))
             fi
+        elif [ -f ~/claude-code-notification/.env ]; then
+            echo "   ✅ 飞书配置: 已配置 (本地兼容模式)"
         else
-            echo "   ⚠️  飞书配置: 未创建 .env 文件"
+            echo "   ⚠️  飞书配置: 未找到配置文件"
+            echo "      请创建或编辑: ~/.finclaude/.env"
             ((issues++))
         fi
     else
@@ -334,6 +427,9 @@ case "${1:-}" in
         ;;
     doctor)
         cmd_doctor
+        ;;
+    update)
+        cmd_update
         ;;
     help|--help|-h)
         show_help

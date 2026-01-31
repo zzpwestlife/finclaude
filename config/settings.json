@@ -4,39 +4,30 @@
     "command": "ccstatusline --theme powerline --warn-cost 0.5",
     "refreshInterval": 5000
   },
-  "permissions": {
-    "allow": [
-      {
-        "command": "npm test",
-        "when": "always"
-      },
-      {
-        "command": "git commit",
-        "when": "after_confirmation"
-      },
-      {
-        "command": "git add",
-        "when": "always"
-      }
-    ],
-    "deny": [
-      {
-        "command": "git push",
-        "when": "coverage < 80"
-      }
-    ]
+  "autoApprove": {
+    "readFiles": true,
+    "editFiles": false,
+    "executeCommands": ["npm test", "git status", "git diff"]
   },
   "hooks": {
-    "PreStop": [
+    "SessionEnd": [
       {
-        "type": "command",
-        "command": "node ~/finclaude/scripts/guard.js"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/finclaude/scripts/guard.js"
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "type": "command",
-        "command": "node ~/Code/OpenSource/finclaude/scripts/notify.js --title 'Claude Code' --message 'Session Ended'"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/finclaude/scripts/notify.js --title 'Claude Code' --message 'Session Ended'"
+          }
+        ]
       }
     ],
     "Notification": [
@@ -45,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ~/Code/OpenSource/finclaude/scripts/notify.js --title 'Claude Code' --message '需要权限审批'"
+            "command": "node ~/finclaude/scripts/notify.js --title 'Claude Code' --message '需要权限审批'"
           }
         ]
       },
@@ -54,16 +45,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ~/Code/OpenSource/finclaude/scripts/notify.js --title 'Claude Code' --message '等待你的输入'"
+            "command": "node ~/finclaude/scripts/notify.js --title 'Claude Code' --message '等待你的输入'"
           }
         ]
       }
     ]
   },
-  "preferredModel": "claude-sonnet-4-5-20251022",
-  "autoApprove": {
-    "readFiles": true,
-    "editFiles": false,
-    "executeCommands": ["npm test", "git status", "git diff"]
-  }
+  "preferredModel": "claude-sonnet-4-5-20251022"
 }
