@@ -49,16 +49,24 @@ superclaude install
 
 ### 2. 安装通知系统
 
-```bash
-# 克隆你微调的 ccdd 版本
-git clone https://github.com/zzpwestlife/claude-code-notification.git ~/claude-code-notification
-cd ~/claude-code-notification
-npm install
+FinClaude 内置了通知系统，支持在以下场景发送通知：
+- 任务完成（Session 结束）
+- 需要权限审批（Permission Prompt）
+- 等待用户输入（Idle Prompt）
 
-# 配置环境变量
+配置步骤：
+
+```bash
+# 1. 复制环境配置模板
 cp .env.example .env
-# 编辑 .env 填入飞书 Webhook URL
+
+# 2. 编辑 .env 配置飞书 Webhook
+# FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxx
 ```
+
+支持的通知渠道：
+1. **macOS 本地通知**：直接在桌面右上角弹窗。
+2. **飞书群机器人**：配置 Webhook 后，消息会同步推送到飞书群。
 
 ### 3. 配置 Claude Code
 
